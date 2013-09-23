@@ -8,7 +8,7 @@ import java.io.UnsupportedEncodingException;
 public class CommonsEncoder extends Base64Encoder
 {
 
-  @Override
+  
   public String encode(byte[] bytes)
   {
     try
@@ -21,7 +21,7 @@ public class CommonsEncoder extends Base64Encoder
     }
   }
 
-  @Override
+  
   public String getType()
   {
     return "CommonsCodec";

@@ -1,26 +1,19 @@
 package org.scribe.builder.api;
 
-import org.scribe.model.*;
+import org.scribe.model.Token;
 
-public class ConstantContactApi extends DefaultApi10a
-{
-  private static final String AUTHORIZE_URL = "https://oauth.constantcontact.com/ws/oauth/confirm_access?oauth_token=%s";
+public class ConstantContactApi extends DefaultApi10a {
+    private static final String AUTHORIZE_URL = "https://oauth.constantcontact.com/ws/oauth/confirm_access?oauth_token=";
 
-  @Override
-  public String getAccessTokenEndpoint()
-  {
-    return "https://oauth.constantcontact.com/ws/oauth/access_token";
-  }
+    public String getAccessTokenEndpoint() {
+        return "https://oauth.constantcontact.com/ws/oauth/access_token";
+    }
 
-  @Override
-  public String getAuthorizationUrl(Token requestToken)
-  {
-    return String.format(AUTHORIZE_URL, requestToken.getToken());
-  }
+    public String getAuthorizationUrl(final Token requestToken) {
+        return AUTHORIZE_URL + requestToken.getToken();
+    }
 
-  @Override
-  public String getRequestTokenEndpoint()
-  {
-    return "https://oauth.constantcontact.com/ws/oauth/request_token";
-  }
+    public String getRequestTokenEndpoint() {
+        return "https://oauth.constantcontact.com/ws/oauth/request_token";
+    }
 }

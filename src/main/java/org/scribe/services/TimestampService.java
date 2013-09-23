@@ -17,7 +17,7 @@ public interface TimestampService
   public String getTimestampInSeconds();
 
   /**
-   * Returns a nonce (unique value for each request)
+   * Returns a nonce (unique name for each request)
    * 
    * @return nonce
    */

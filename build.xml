@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<project basedir="." default="build" name="scribe">
+	
+	<property name="dist.dir" value="dist" />
+	<property name="build.dir" value="build" />
+	<property name="dist.jar" value="${ant.project.name}.jar" />
+	<property name="src.dir" value="src" />
+	<property name="lib.dir" value="lib" />
+	
+	<path id="build.classpath">
+		<pathelement location="${build.dir}/classes" />
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	
+	<target name="init">
+		<mkdir dir="${dist.dir}" />
+		<mkdir dir="${build.dir}" />
+	</target>
+	
+	<!-- Clean the destination directories  -->
+	<target name="clean">
+		<delete dir="${dist.dir}" />
+		<delete dir="${build.dir}" />
+	</target>
+
+	<!-- Compile  -->
+	<target name="compile" description="Compiling" depends="init">
+		<mkdir dir="${build.dir}/classes" />
+
+		<javac destdir="${build.dir}/classes" debug="true" debuglevel="source,lines,vars" source="1.4" target="1.4">
+			<src path="${src.dir}" />
+			<classpath refid="build.classpath" />
+		</javac>
+
+		<copy todir="${build.dir}/classes">
+			<fileset dir="${src.dir}">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<!-- Build the jar  -->
+	<target name="jar" description="Building jar.">
+		<mkdir dir="${build.dir}/classes" />
+
+		<jar compress="${jar.compress}" jarfile="${dist.dir}/${dist.jar}" index="false">
+			<fileset dir="${build.dir}/classes">
+				<filename name="**/*" />
+			</fileset>
+		</jar>
+
+	</target>
+	
+	<target name="build" description="Build Release" depends="clean, compile, jar" />
+</project>

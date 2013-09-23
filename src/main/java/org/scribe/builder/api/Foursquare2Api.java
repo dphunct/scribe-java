@@ -1,29 +1,26 @@
 package org.scribe.builder.api;
 
-import org.scribe.extractors.*;
-import org.scribe.model.*;
-import org.scribe.utils.*;
+import org.scribe.extractors.AccessTokenExtractor;
+import org.scribe.extractors.JsonTokenExtractor;
+import org.scribe.model.OAuthConfig;
+import org.scribe.utils.OAuthEncoder;
+import org.scribe.utils.Preconditions;
 
-public class Foursquare2Api extends DefaultApi20
-{
-  private static final String AUTHORIZATION_URL = "https://foursquare.com/oauth2/authenticate?client_id=%s&response_type=code&redirect_uri=%s";
+public class Foursquare2Api extends DefaultApi20 {
+    private static final String AUTHORIZE_URL = "https://foursquare.com/oauth2/authenticate?client_id=%clientId%&response_type=code&redirect_uri=%redirectUri%";
 
-  @Override
-  public String getAccessTokenEndpoint()
-  {
-    return "https://foursquare.com/oauth2/access_token?grant_type=authorization_code";
-  }
+    public String getAccessTokenEndpoint() {
+        return "https://foursquare.com/oauth2/access_token?grant_type=authorization_code";
+    }
 
-  @Override
-  public String getAuthorizationUrl(OAuthConfig config)
-  {
-    Preconditions.checkValidUrl(config.getCallback(), "Must provide a valid url as callback. Foursquare2 does not support OOB");
-    return String.format(AUTHORIZATION_URL, config.getApiKey(), OAuthEncoder.encode(config.getCallback()));
-  }
+    public String getAuthorizationUrl(final OAuthConfig config) {
+        Preconditions.checkValidUrl(config.getCallback(),
+                "Must provide a valid url as callback. Foursquare2 does not support OOB");
+        return AUTHORIZE_URL.replace("clientId", config.getApiKey()).replace("redirectUri",
+                OAuthEncoder.encode(config.getCallback()));
+    }
 
-  @Override
-  public AccessTokenExtractor getAccessTokenExtractor()
-  {
-    return new JsonTokenExtractor();
-  }
+    public AccessTokenExtractor getAccessTokenExtractor() {
+        return new JsonTokenExtractor();
+    }
 }

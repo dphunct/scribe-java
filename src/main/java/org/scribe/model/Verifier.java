@@ -15,7 +15,7 @@ public class Verifier
   /**
    * Default constructor.
    * 
-   * @param value verifier value
+   * @param name verifier name
    */
   public Verifier(String value)
   {
