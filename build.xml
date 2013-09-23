@@ -5,7 +5,7 @@
 	<property name="dist.dir" value="dist" />
 	<property name="build.dir" value="build" />
 	<property name="dist.jar" value="${ant.project.name}.jar" />
-	<property name="src.dir" value="src" />
+	<property name="src.dir" value="src/main/java" />
 	<property name="lib.dir" value="lib" />
 	
 	<path id="build.classpath">
