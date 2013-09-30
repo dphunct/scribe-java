@@ -1,18 +1,29 @@
 package org.scribe.model;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The representation of an OAuth HttpRequest.
+ * The representation of an OAuth Request is a Bridge to the request object.  The user can provide the underlying request object
  * 
- * Adds OAuth-related functionality to the {@link Request}  
- * 
- * @author Pablo Fernandez
+ * @author Duane Musser
  */
-public class OAuthRequest extends Request {
+public class OAuthRequest implements Request {
+    /**
+     * 
+     */
+    private static final String NOT_INTIALIZED = "Not intialized!  Make sure RequestFactortImpl is provided.";
     private static final String OAUTH_PREFIX = "oauth_";
     private final Map/*<String, String>*/oauthParameters;
+
+    private Request request;
+
+    public OAuthRequest(final Request request) {
+        super();
+        this.request = request;
+        oauthParameters = new HashMap/*<String, String>*/();
+    }
 
     /**
      * Default constructor.
@@ -21,7 +32,22 @@ public class OAuthRequest extends Request {
      * @param url resource URL
      */
     public OAuthRequest(final Verb verb, final String url) {
-        super(verb, url);
+        super();
+        try {
+            final Class clazz = OAuthRequest.class.getClassLoader().loadClass(
+                    "org.scribe.model.RequestFactoryImpl");
+            final RequestFactory factory = (RequestFactory) clazz.newInstance();
+            request = factory.createRequest(verb, url);
+        } catch (final ClassNotFoundException e) {
+            e.printStackTrace();
+            request = null;
+        } catch (final InstantiationException e) {
+            e.printStackTrace();
+            request = null;
+        } catch (final IllegalAccessException e) {
+            e.printStackTrace();
+            request = null;
+        }
         oauthParameters = new HashMap/*<String, String>*/();
     }
 
@@ -58,4 +84,106 @@ public class OAuthRequest extends Request {
     public String toString() {
         return "@OAuthRequest(" + String.valueOf(getVerb()) + ", " + String.valueOf(getUrl()) + ")";
     }
+
+    /**
+     * @see org.scribe.model.Request#addHeader(java.lang.String, java.lang.String)
+     */
+    public void addHeader(final String key, final String value) {
+        if (request == null) {
+            throw new IllegalAccessError(NOT_INTIALIZED);
+        }
+        request.addHeader(key, value);
+    }
+
+    /**
+     * @see org.scribe.model.Request#addBodyParameter(java.lang.String, java.lang.String)
+     */
+    public void addBodyParameter(final String key, final String value) {
+        if (request == null) {
+            throw new IllegalAccessError(NOT_INTIALIZED);
+        }
+        request.addBodyParameter(key, value);
+    }
+
+    /**
+     * @see org.scribe.model.Request#addQuerystringParameter(java.lang.String, java.lang.String)
+     */
+    public void addQuerystringParameter(final String key, final String value) {
+        if (request == null) {
+            throw new IllegalAccessError(NOT_INTIALIZED);
+        }
+        request.addQuerystringParameter(key, value);
+    }
+
+    /**
+     * @see org.scribe.model.Request#getQueryStringParams()
+     */
+    public ParameterList getQueryStringParams() {
+        if (request == null) {
+            throw new IllegalAccessError(NOT_INTIALIZED);
+        }
+        return request.getQueryStringParams();
+    }
+
+    /**
+     * @see org.scribe.model.Request#getBodyParams()
+     */
+    public ParameterList getBodyParams() {
+        if (request == null) {
+            throw new IllegalAccessError(NOT_INTIALIZED);
+        }
+        return request.getBodyParams();
+    }
+
+    /**
+     * @see org.scribe.model.Request#getUrl()
+     */
+    public String getUrl() {
+        if (request == null) {
+            throw new IllegalAccessError(NOT_INTIALIZED);
+        }
+        return request.getUrl();
+    }
+
+    /**
+     * @see org.scribe.model.Request#getBodyContents()
+     */
+    public String getBodyContents() {
+        if (request == null) {
+            throw new IllegalAccessError(NOT_INTIALIZED);
+        }
+        return request.getBodyContents();
+    }
+
+    /**
+     * @see org.scribe.model.Request#getVerb()
+     */
+    public Verb getVerb() {
+        if (request == null) {
+            throw new IllegalAccessError(NOT_INTIALIZED);
+        }
+        return request.getVerb();
+    }
+
+    /**
+     * @see org.scribe.model.Request#getHeaders()
+     */
+    public Map getHeaders() {
+        if (request == null) {
+            throw new IllegalAccessError(NOT_INTIALIZED);
+        }
+        return request.getHeaders();
+    }
+
+    /**
+     * @throws IOException 
+     * @see org.scribe.model.Request#send()
+     */
+    public Response send() throws IOException {
+        if (request == null) {
+            throw new IllegalAccessError(NOT_INTIALIZED);
+        }
+        return request.send();
+    }
+
 }

@@ -1,5 +1,6 @@
 package org.scribe.builder.api;
 
+import org.apache.commons.lang.StringUtils;
 import org.scribe.model.OAuthConfig;
 import org.scribe.utils.OAuthEncoder;
 import org.scribe.utils.Preconditions;
@@ -17,8 +18,9 @@ public class FacebookApi extends DefaultApi20 {
                 "Must provide a valid url as callback. Facebook does not support OOB");
 
         // Append scope if present
-        String result = AUTHORIZE_URL.replace("%clientId%", config.getApiKey()).replace(
-                "redirectUri", OAuthEncoder.encode(config.getCallback()));
+        String result = StringUtils.replace(AUTHORIZE_URL, "%clientId%", config.getApiKey());
+        result = StringUtils.replace(result, "redirectUri",
+                OAuthEncoder.encode(config.getCallback()));
         if (config.hasScope()) {
             result = result + SCOPED_PARAMETER + config.getScope();
         }

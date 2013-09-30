@@ -1,5 +1,6 @@
 package org.scribe.builder.api;
 
+import org.apache.commons.lang.StringUtils;
 import org.scribe.extractors.AccessTokenExtractor;
 import org.scribe.extractors.JsonTokenExtractor;
 import org.scribe.model.OAuthConfig;
@@ -16,8 +17,9 @@ public class Foursquare2Api extends DefaultApi20 {
     public String getAuthorizationUrl(final OAuthConfig config) {
         Preconditions.checkValidUrl(config.getCallback(),
                 "Must provide a valid url as callback. Foursquare2 does not support OOB");
-        return AUTHORIZE_URL.replace("clientId", config.getApiKey()).replace("redirectUri",
-                OAuthEncoder.encode(config.getCallback()));
+        final String result = StringUtils.replace(AUTHORIZE_URL, "clientId", config.getApiKey());
+        StringUtils.replace(result, "redirectUri", OAuthEncoder.encode(config.getCallback()));
+        return result;
     }
 
     public AccessTokenExtractor getAccessTokenExtractor() {

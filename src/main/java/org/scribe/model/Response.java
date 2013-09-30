@@ -1,69 +1,25 @@
+/**
+ * 
+ */
 package org.scribe.model;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.UnknownHostException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
-import org.scribe.exceptions.OAuthException;
-import org.scribe.utils.StreamUtils;
-
 /**
- * Represents an HTTP Response.
- * 
- * @author Pablo Fernandez
+ * @author DMusser
+ *
  */
-public class Response {
+public interface Response {
 
-    private int code;
-    private String message;
-    private String body;
-    private InputStream stream;
-    private Map/*<String, String>*/headers;
-
-    Response(final HttpURLConnection connection) throws IOException {
-        try {
-            connection.connect();
-            code = connection.getResponseCode();
-            message = connection.getResponseMessage();
-            headers = parseHeaders(connection);
-            stream = isSuccessful() ? connection.getInputStream() : connection.getErrorStream();
-        } catch (final UnknownHostException e) {
-            throw new OAuthException("The IP address of a host could not be determined.", e);
-        }
-    }
-
-    private String parseBodyContents() {
-        body = StreamUtils.getStreamContents(getStream());
-        return body;
-    }
-
-    private Map/*<String, String>*/parseHeaders(final HttpURLConnection conn) {
-        final Map/*<String, String>*/headers = new HashMap/*<String, String>*/();
-        final Iterator i = conn.getHeaderFields().keySet().iterator();
-        while (i.hasNext()) {
-            final String key = (String) i.next();
-            headers.put(key, ((Collection) conn.getHeaderFields().get(key)).toArray()[0]);
-        }
-        return headers;
-    }
-
-    public boolean isSuccessful() {
-        return getCode() >= 200 && getCode() < 400;
-    }
+    public boolean isSuccessful();
 
     /**
-     * Obtains the HTTP Response body
+     * Obtains the HTTP ResponseHttpImpl body
      * 
      * @return response body
      */
-    public String getBody() {
-        return body != null ? body : parseBodyContents();
-    }
+    public String getBody();
 
     /**
      * Obtains the meaningful stream of the HttpUrlConnection, either inputStream
@@ -71,18 +27,14 @@ public class Response {
      * 
      * @return input stream / error stream
      */
-    public InputStream getStream() {
-        return stream;
-    }
+    public InputStream getStream();
 
     /**
      * Obtains the HTTP status code
      * 
      * @return the status code
      */
-    public int getCode() {
-        return code;
-    }
+    public int getCode();
 
     /**
      * Obtains the HTTP status message.
@@ -90,18 +42,14 @@ public class Response {
      * 
      * @return the status message
      */
-    public String getMessage() {
-        return message;
-    }
+    public String getMessage();
 
     /**
-     * Obtains a {@link Map} containing the HTTP Response Headers
+     * Obtains a {@link Map} containing the HTTP ResponseHttpImpl Headers
      * 
      * @return headers
      */
-    public Map/*<String, String>*/getHeaders() {
-        return headers;
-    }
+    public Map/*<String, String>*/getHeaders();
 
     /**
      * Obtains a single HTTP Header name, or null if undefined
@@ -110,8 +58,6 @@ public class Response {
      * 
      * @return header name or null.
      */
-    public String getHeader(final String name) {
-        return (String) headers.get(name);
-    }
+    public String getHeader(final String name);
 
 }

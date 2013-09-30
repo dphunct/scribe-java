@@ -1,5 +1,7 @@
 package org.scribe.oauth;
 
+import java.io.IOException;
+
 import org.scribe.builder.api.DefaultApi20;
 import org.scribe.model.OAuthConfig;
 import org.scribe.model.OAuthConstants;
@@ -27,8 +29,10 @@ public class OAuth20ServiceImpl implements OAuthService {
 
     /**
      * {@inheritDoc}
+     * @throws IOException 
      */
-    public Token getAccessToken(final Token requestToken, final Verifier verifier) {
+    public Token getAccessToken(final Token requestToken, final Verifier verifier)
+            throws IOException {
         final OAuthRequest request = new OAuthRequest(api.getAccessTokenVerb(),
                 api.getAccessTokenEndpoint());
         request.addQuerystringParameter(OAuthConstants.CLIENT_ID, config.getApiKey());
@@ -73,8 +77,9 @@ public class OAuth20ServiceImpl implements OAuthService {
 
     /**
      * {@inheritDoc}
+     * @throws IOException 
      */
-    public Token getAccessToken(final Token requestToken) {
+    public Token getAccessToken(final Token requestToken) throws IOException {
         final OAuthRequest request = new OAuthRequest(api.getAccessTokenVerb(),
                 api.getAccessTokenEndpoint());
         request.addQuerystringParameter(OAuthConstants.CLIENT_ID, config.getApiKey());

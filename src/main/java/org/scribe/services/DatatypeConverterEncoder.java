@@ -1,18 +1,14 @@
 package org.scribe.services;
 
-import javax.xml.bind.*;
+import org.apache.commons.codec.binary.Base64;
 
-public class DatatypeConverterEncoder extends Base64Encoder
-{
-  
-  public String encode(byte[] bytes)
-  {
-    return DatatypeConverter.printBase64Binary(bytes);
-  }
+public class DatatypeConverterEncoder extends Base64Encoder {
 
-  
-  public String getType()
-  {
-    return "DatatypeConverter";
-  }
+    public String encode(final byte[] bytes) {
+        return String.valueOf(Base64.encodeBase64(bytes));
+    }
+
+    public String getType() {
+        return "DatatypeConverter";
+    }
 }

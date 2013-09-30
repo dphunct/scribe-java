@@ -7,8 +7,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.scribe.exceptions.OAuthException;
 
 /**
@@ -47,7 +47,7 @@ public class OAuthEncoder {
 
     private static String applyRule(final String encoded, final String toReplace,
             final String replacement) {
-        return encoded.replaceAll(Pattern.quote(toReplace), replacement);
+        return StringUtils.replace(encoded, toReplace, replacement);
     }
 
     public static String decode(final String encoded) {

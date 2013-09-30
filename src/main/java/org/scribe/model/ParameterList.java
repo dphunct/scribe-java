@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.StringUtils;
 import org.scribe.utils.OAuthEncoder;
 import org.scribe.utils.Preconditions;
 
@@ -79,10 +80,10 @@ public class ParameterList {
 
     public void addQuerystring(final String queryString) {
         if (queryString != null && queryString.length() > 0) {
-            final String[] vals = queryString.split(PARAM_SEPARATOR);
+            final String[] vals = StringUtils.split(queryString, PARAM_SEPARATOR);
             for (int i = 0; i < vals.length; i++) {
                 final String param = vals[i];
-                final String pair[] = param.split(PAIR_SEPARATOR);
+                final String pair[] = StringUtils.split(param, PAIR_SEPARATOR);
                 final String key = OAuthEncoder.decode(pair[0]);
                 final String value = pair.length > 1 ? OAuthEncoder.decode(pair[1]) : EMPTY_STRING;
                 params.add(new Parameter(key, value));

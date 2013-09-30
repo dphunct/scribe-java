@@ -1,5 +1,6 @@
 package org.scribe.builder.api;
 
+import org.apache.commons.lang.StringUtils;
 import org.scribe.extractors.AccessTokenExtractor;
 import org.scribe.extractors.JsonTokenExtractor;
 import org.scribe.model.OAuthConfig;
@@ -22,8 +23,8 @@ public class KaixinApi20 extends DefaultApi20 {
     }
 
     public String getAuthorizationUrl(final OAuthConfig config) {
-        String result = AUTHORIZE_URL.replace("clientId", config.getApiKey()).replace(
-                "%redirectUri%", OAuthEncoder.encode(config.getCallback()));
+        String result = StringUtils.replace(AUTHORIZE_URL, "clientId", config.getApiKey());
+        StringUtils.replace(result, "%redirectUri%", OAuthEncoder.encode(config.getCallback()));
         // Append scope if present
         if (config.hasScope()) {
             result = SCOPED_AUTHORIZE_URL + OAuthEncoder.encode(config.getScope());

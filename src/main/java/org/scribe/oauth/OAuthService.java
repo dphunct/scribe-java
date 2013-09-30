@@ -1,5 +1,7 @@
 package org.scribe.oauth;
 
+import java.io.IOException;
+
 import org.scribe.model.OAuthRequest;
 import org.scribe.model.Token;
 import org.scribe.model.Verifier;
@@ -16,8 +18,9 @@ public interface OAuthService {
      * Retrieve the request token.
      * 
      * @return request token
+     * @throws IOException 
      */
-    public Token getRequestToken();
+    public Token getRequestToken() throws IOException;
 
     /**
      * Retrieve the access token
@@ -25,16 +28,18 @@ public interface OAuthService {
      * @param requestToken request token (obtained previously)
      * @param verifier verifier code
      * @return access token
+     * @throws IOException 
      */
-    public Token getAccessToken(Token requestToken, Verifier verifier);
+    public Token getAccessToken(Token requestToken, Verifier verifier) throws IOException;
 
     /**
      * Retrieve the access token
      * 
      * @param requestToken request token (obtained previously)
      * @return access token
+     * @throws IOException 
      */
-    public Token getAccessToken(Token requestToken);
+    public Token getAccessToken(Token requestToken) throws IOException;
 
     /**
      * Signs am OAuth request

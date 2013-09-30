@@ -10,7 +10,7 @@ import org.scribe.model.*;
 public interface AccessTokenExtractor
 {
   /**
-   * Extracts the access token from the contents of an Http Response
+   * Extracts the access token from the contents of an Http ResponseHttpImpl
    *  
    * @param response the contents of the response
    * @return OAuth access token

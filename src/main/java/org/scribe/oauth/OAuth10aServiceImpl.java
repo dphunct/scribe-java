@@ -1,14 +1,13 @@
 package org.scribe.oauth;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.scribe.builder.api.DefaultApi10a;
 import org.scribe.model.OAuthConfig;
 import org.scribe.model.OAuthConstants;
 import org.scribe.model.OAuthRequest;
-import org.scribe.model.Request;
 import org.scribe.model.RequestTuner;
 import org.scribe.model.Response;
 import org.scribe.model.SignatureType;
@@ -39,29 +38,32 @@ public class OAuth10aServiceImpl implements OAuthService {
         this.config = config;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public Token getRequestToken(final int timeout, final TimeUnit unit) {
-        return getRequestToken(new TimeoutTuner(timeout, unit));
+    public Token getRequestToken() throws IOException {
+        return getRequestToken(null);
     }
 
-    public Token getRequestToken() {
-        return getRequestToken(2, TimeUnit.SECONDS);
-    }
-
-    public Token getRequestToken(final RequestTuner tuner) {
+    public Token getRequestToken(final Map parameters) throws IOException {
         config.log("obtaining request token from " + api.getRequestTokenEndpoint());
         final OAuthRequest request = new OAuthRequest(api.getRequestTokenVerb(),
                 api.getRequestTokenEndpoint());
 
+        if (parameters != null && parameters.size() > 0) {
+            final Iterator i = parameters.keySet().iterator();
+            while (i.hasNext()) {
+                final String key = (String) i.next();
+                final String value = (String) parameters.get(key);
+                if (value != null) {
+                    request.addBodyParameter(key, value);
+                }
+            }
+        }
         config.log("setting oauth_callback to " + config.getCallback());
         request.addOAuthParameter(OAuthConstants.CALLBACK, config.getCallback());
         addOAuthParams(request, OAuthConstants.EMPTY_TOKEN);
         appendSignature(request);
 
         config.log("sending request...");
-        final Response response = request.send(tuner);
+        final Response response = request.send();
         final String body = response.getBody();
 
         config.log("response status code: " + response.getCode());
@@ -89,17 +91,12 @@ public class OAuth10aServiceImpl implements OAuthService {
     /**
      * {@inheritDoc}
      */
-    public Token getAccessToken(final Token requestToken, final Verifier verifier,
-            final int timeout, final TimeUnit unit) {
-        return getAccessToken(requestToken, verifier, new TimeoutTuner(timeout, unit));
-    }
-
     public Token getAccessToken(final Token requestToken, final Verifier verifier) {
-        return getAccessToken(requestToken, verifier, 2, TimeUnit.SECONDS);
+        return getAccessToken(requestToken, verifier);
     }
 
     public Token getAccessToken(final Token requestToken, final Verifier verifier,
-            final RequestTuner tuner) {
+            final RequestTuner tuner) throws IOException {
         config.log("obtaining access token from " + api.getAccessTokenEndpoint());
         final OAuthRequest request = new OAuthRequest(api.getAccessTokenVerb(),
                 api.getAccessTokenEndpoint());
@@ -109,22 +106,19 @@ public class OAuth10aServiceImpl implements OAuthService {
         config.log("setting token to: " + requestToken + " and verifier to: " + verifier);
         addOAuthParams(request, requestToken);
         appendSignature(request);
-        final Response response = request.send(tuner);
+        final Response response = request.send();
         return api.getAccessTokenExtractor().extract(response.getBody());
     }
 
     /**
      * {@inheritDoc}
      */
-    public Token getAccessToken(final Token requestToken, final int timeout, final TimeUnit unit) {
-        return getAccessToken(requestToken, new TimeoutTuner(timeout, unit));
-    }
-
     public Token getAccessToken(final Token requestToken) {
-        return getAccessToken(requestToken, 2, TimeUnit.SECONDS);
+        return getAccessToken(requestToken);
     }
 
-    public Token getAccessToken(final Token requestToken, final RequestTuner tuner) {
+    public Token getAccessToken(final Token requestToken, final RequestTuner tuner)
+            throws IOException {
         config.log("obtaining access token from " + api.getAccessTokenEndpoint());
         final OAuthRequest request = new OAuthRequest(api.getAccessTokenVerb(),
                 api.getAccessTokenEndpoint());
@@ -133,7 +127,7 @@ public class OAuth10aServiceImpl implements OAuthService {
         config.log("setting token to: " + requestToken);
         addOAuthParams(request, requestToken);
         appendSignature(request);
-        final Response response = request.send(tuner);
+        final Response response = request.send();
         return api.getAccessTokenExtractor().extract(response.getBody());
     }
 
@@ -141,7 +135,7 @@ public class OAuth10aServiceImpl implements OAuthService {
      * {@inheritDoc}
      */
     public void signRequest(final Token token, final OAuthRequest request) {
-        config.log("signing request: " + request.getCompleteUrl());
+        config.log("signing request: " + request.getUrl());
 
         // Do not append the token if empty. This is for two legged OAuth calls.
         if (!token.isEmpty()) {
@@ -194,17 +188,4 @@ public class OAuth10aServiceImpl implements OAuthService {
         }
     }
 
-    private static class TimeoutTuner extends RequestTuner {
-        private final int duration;
-        private final TimeUnit unit;
-
-        public TimeoutTuner(final int duration, final TimeUnit unit) {
-            this.duration = duration;
-            this.unit = unit;
-        }
-
-        public void tune(final Request request) {
-            request.setReadTimeout(duration, unit);
-        }
-    }
 }

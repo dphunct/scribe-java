@@ -22,7 +22,7 @@ public class BaseStringExtractorImpl implements BaseStringExtractor {
     public String extract(final OAuthRequest request) {
         checkPreconditions(request);
         final String verb = OAuthEncoder.encode(request.getVerb().name());
-        final String url = OAuthEncoder.encode(request.getSanitizedUrl());
+        final String url = OAuthEncoder.encode(request.getUrl());
         final String params = getSortedAndEncodedParams(request);
         final StringBuffer buffer = new StringBuffer();
         buffer.append(verb);
