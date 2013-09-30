@@ -2,5 +2,4 @@
 language: java
 
 # need to override travis 'install' since it will try gpg sign and fail.
-#install: mvn clean package -DskipTests=true
-install: ant
+install: ant build
