@@ -1,7 +1,6 @@
 package org.scribe.model;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -154,28 +153,28 @@ public class RequestHttpImpl implements Request {
         return StringUtils.replace(StringUtils.replace(url, "\\?.*", ""), "\\:\\d{4}", "");
     }
 
-    /* (non-Javadoc)
-     * @see org.scribe.model.Request#getBodyContents()
-     */
-    public String getBodyContents() {
-        try {
-            return new String(getByteBodyContents(), getCharset());
-        } catch (final UnsupportedEncodingException uee) {
-            throw new OAuthException("Unsupported Charset: " + charset, uee);
-        }
-    }
+    //    /* (non-Javadoc)
+    //     * @see org.scribe.model.Request#getBodyContents()
+    //     */
+    //    public String getBodyContents() {
+    //        try {
+    //            return new String(getByteBodyContents(), getCharset());
+    //        } catch (final UnsupportedEncodingException uee) {
+    //            throw new OAuthException("Unsupported Charset: " + charset, uee);
+    //        }
+    //    }
 
-    byte[] getByteBodyContents() {
-        if (bytePayload != null) {
-            return bytePayload;
-        }
-        final String body = (payload != null) ? payload : bodyParams.asFormUrlEncodedString();
-        try {
-            return body.getBytes(getCharset());
-        } catch (final UnsupportedEncodingException uee) {
-            throw new OAuthException("Unsupported Charset: " + getCharset(), uee);
-        }
-    }
+    //    byte[] getByteBodyContents() {
+    //        if (bytePayload != null) {
+    //            return bytePayload;
+    //        }
+    //        final String body = (payload != null) ? payload : bodyParams.asFormUrlEncodedString();
+    //        try {
+    //            return body.getBytes(getCharset());
+    //        } catch (final UnsupportedEncodingException uee) {
+    //            throw new OAuthException("Unsupported Charset: " + getCharset(), uee);
+    //        }
+    //    }
 
     /* (non-Javadoc)
      * @see org.scribe.model.Request#getVerb()

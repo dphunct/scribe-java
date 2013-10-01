@@ -109,7 +109,7 @@ public interface Request {
      * @return form encoded string
      * @throws OAuthException if the charset chosen is not supported
      */
-    public String getBodyContents();
+    //    public String getBodyContents();
 
     /**
      * Returns the HTTP Verb

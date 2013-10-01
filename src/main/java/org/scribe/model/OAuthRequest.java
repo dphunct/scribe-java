@@ -145,15 +145,15 @@ public class OAuthRequest implements Request {
         return request.getUrl();
     }
 
-    /**
-     * @see org.scribe.model.Request#getBodyContents()
-     */
-    public String getBodyContents() {
-        if (request == null) {
-            throw new IllegalAccessError(NOT_INTIALIZED);
-        }
-        return request.getBodyContents();
-    }
+    //    /**
+    //     * @see org.scribe.model.Request#getBodyContents()
+    //     */
+    //    public String getBodyContents() {
+    //        if (request == null) {
+    //            throw new IllegalAccessError(NOT_INTIALIZED);
+    //        }
+    //        return request.getBodyContents();
+    //    }
 
     /**
      * @see org.scribe.model.Request#getVerb()

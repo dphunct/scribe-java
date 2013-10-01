@@ -1,6 +1,7 @@
 h2. This is a fork of scribe for java 1.4
 
-I have not changed any functionality.  I only updated the code to make it compile with a 1.4 compiler.
+I updated the code to make it compile with a 1.4 compiler.
+I also abstracted the default java HTTP out so I can rely on a separate HTTP provider in the package.
 
 Please see the original product for more information.  If you find an issue in my translation of the project, 
 please let me know.  thanks!
