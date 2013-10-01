@@ -55,4 +55,6 @@
 	</target>
 	
 	<target name="build" description="Build Release" depends="clean, compile, jar" />
+	
+	<target name="test" description="Test Release" depends="build" />
 </project>
