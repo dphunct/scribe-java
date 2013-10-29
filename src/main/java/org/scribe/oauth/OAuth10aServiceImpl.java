@@ -8,7 +8,6 @@ import org.scribe.builder.api.DefaultApi10a;
 import org.scribe.model.OAuthConfig;
 import org.scribe.model.OAuthConstants;
 import org.scribe.model.OAuthRequest;
-import org.scribe.model.RequestTuner;
 import org.scribe.model.Response;
 import org.scribe.model.SignatureType;
 import org.scribe.model.Token;
@@ -92,43 +91,30 @@ public class OAuth10aServiceImpl implements OAuthService {
      * {@inheritDoc}
      */
     public Token getAccessToken(final Token requestToken, final Verifier verifier) {
-        return getAccessToken(requestToken, verifier);
-    }
-
-    public Token getAccessToken(final Token requestToken, final Verifier verifier,
-            final RequestTuner tuner) throws IOException {
         config.log("obtaining access token from " + api.getAccessTokenEndpoint());
         final OAuthRequest request = new OAuthRequest(api.getAccessTokenVerb(),
                 api.getAccessTokenEndpoint());
         request.addOAuthParameter(OAuthConstants.TOKEN, requestToken.getToken());
-        request.addOAuthParameter(OAuthConstants.VERIFIER, verifier.getValue());
-
+        if (verifier != null) {
+            request.addOAuthParameter(OAuthConstants.VERIFIER, verifier.getValue());
+        }
         config.log("setting token to: " + requestToken + " and verifier to: " + verifier);
         addOAuthParams(request, requestToken);
         appendSignature(request);
-        final Response response = request.send();
-        return api.getAccessTokenExtractor().extract(response.getBody());
+        try {
+            final Response response = request.send();
+            return api.getAccessTokenExtractor().extract(response.getBody());
+        } catch (final IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     public Token getAccessToken(final Token requestToken) {
-        return getAccessToken(requestToken);
-    }
-
-    public Token getAccessToken(final Token requestToken, final RequestTuner tuner)
-            throws IOException {
-        config.log("obtaining access token from " + api.getAccessTokenEndpoint());
-        final OAuthRequest request = new OAuthRequest(api.getAccessTokenVerb(),
-                api.getAccessTokenEndpoint());
-        request.addOAuthParameter(OAuthConstants.TOKEN, requestToken.getToken());
-
-        config.log("setting token to: " + requestToken);
-        addOAuthParams(request, requestToken);
-        appendSignature(request);
-        final Response response = request.send();
-        return api.getAccessTokenExtractor().extract(response.getBody());
+        return getAccessToken(requestToken, null);
     }
 
     /**

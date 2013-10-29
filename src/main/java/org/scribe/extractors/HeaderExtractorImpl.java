@@ -36,7 +36,7 @@ public class HeaderExtractorImpl implements HeaderExtractor {
             }
             final StringBuffer buffer = new StringBuffer();
             buffer.append(entry.getKey());
-            buffer.append("\"=");
+            buffer.append("=\"");
             buffer.append(OAuthEncoder.encode((String) entry.getValue()));
             buffer.append("\"");
             header.append(buffer.toString());
