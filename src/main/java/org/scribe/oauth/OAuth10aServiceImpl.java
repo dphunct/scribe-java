@@ -23,8 +23,8 @@ import org.scribe.utils.MapUtils;
 public class OAuth10aServiceImpl implements OAuthService {
     private static final String VERSION = "1.0";
 
-    private final OAuthConfig config;
-    private final DefaultApi10a api;
+    protected final OAuthConfig config;
+    protected final DefaultApi10a api;
 
     /**
      * Default constructor
@@ -43,16 +43,16 @@ public class OAuth10aServiceImpl implements OAuthService {
 
     public Token getRequestToken(final Map parameters) throws IOException {
         config.log("obtaining request token from " + api.getRequestTokenEndpoint());
-        final OAuthRequest request = new OAuthRequest(api.getRequestTokenVerb(),
-                api.getRequestTokenEndpoint());
-
+        final OAuthRequest request = config
+                .getOAuthRequestCreatorFactory()
+                .createRequestTokenRequest(api.getRequestTokenVerb(), api.getRequestTokenEndpoint());
         if (parameters != null && parameters.size() > 0) {
             final Iterator i = parameters.keySet().iterator();
             while (i.hasNext()) {
                 final String key = (String) i.next();
                 final String value = (String) parameters.get(key);
                 if (value != null) {
-                    request.addBodyParameter(key, value);
+                    request.addQuerystringParameter(key, value);
                 }
             }
         }
@@ -70,7 +70,7 @@ public class OAuth10aServiceImpl implements OAuthService {
         return api.getRequestTokenExtractor().extract(body);
     }
 
-    private void addOAuthParams(final OAuthRequest request, final Token token) {
+    protected void addOAuthParams(final OAuthRequest request, final Token token) {
         request.addOAuthParameter(OAuthConstants.TIMESTAMP, api.getTimestampService()
                 .getTimestampInSeconds());
         request.addOAuthParameter(OAuthConstants.NONCE, api.getTimestampService().getNonce());
@@ -92,8 +92,8 @@ public class OAuth10aServiceImpl implements OAuthService {
      */
     public Token getAccessToken(final Token requestToken, final Verifier verifier) {
         config.log("obtaining access token from " + api.getAccessTokenEndpoint());
-        final OAuthRequest request = new OAuthRequest(api.getAccessTokenVerb(),
-                api.getAccessTokenEndpoint());
+        final OAuthRequest request = config.getOAuthRequestCreatorFactory()
+                .createAccessTokenRequest(api.getAccessTokenVerb(), api.getAccessTokenEndpoint());
         request.addOAuthParameter(OAuthConstants.TOKEN, requestToken.getToken());
         if (verifier != null) {
             request.addOAuthParameter(OAuthConstants.VERIFIER, verifier.getValue());
@@ -146,7 +146,7 @@ public class OAuth10aServiceImpl implements OAuthService {
         return api.getAuthorizationUrl(requestToken);
     }
 
-    private String getSignature(final OAuthRequest request, final Token token) {
+    protected String getSignature(final OAuthRequest request, final Token token) {
         config.log("generating signature...");
         config.log("using base64 encoder: " + Base64Encoder.type());
         final String baseString = api.getBaseStringExtractor().extract(request);
@@ -158,7 +158,7 @@ public class OAuth10aServiceImpl implements OAuthService {
         return signature;
     }
 
-    private void appendSignature(final OAuthRequest request) {
+    protected void appendSignature(final OAuthRequest request) {
         if (SignatureType.Header.equals(config.getSignatureType())) {
             config.log("using Http Header signature");
 

@@ -18,7 +18,7 @@ public class TokenExtractorImpl implements RequestTokenExtractor, AccessTokenExt
         return new Token(token, secret, response);
     }
 
-    private static String extract(final String response, final String param) {
+    public static String extract(final String response, final String param) {
         final int start = response.indexOf(param + "=");
         if (start >= 0) {
             int end = response.indexOf("&", start);

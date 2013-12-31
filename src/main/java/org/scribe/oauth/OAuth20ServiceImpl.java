@@ -33,8 +33,8 @@ public class OAuth20ServiceImpl implements OAuthService {
      */
     public Token getAccessToken(final Token requestToken, final Verifier verifier)
             throws IOException {
-        final OAuthRequest request = new OAuthRequest(api.getAccessTokenVerb(),
-                api.getAccessTokenEndpoint());
+        final OAuthRequest request = config.getOAuthRequestCreatorFactory()
+                .createAccessTokenRequest(api.getAccessTokenVerb(), api.getAccessTokenEndpoint());
         request.addQuerystringParameter(OAuthConstants.CLIENT_ID, config.getApiKey());
         request.addQuerystringParameter(OAuthConstants.CLIENT_SECRET, config.getApiSecret());
         request.addQuerystringParameter(OAuthConstants.CODE, verifier.getValue());
@@ -80,8 +80,8 @@ public class OAuth20ServiceImpl implements OAuthService {
      * @throws IOException 
      */
     public Token getAccessToken(final Token requestToken) throws IOException {
-        final OAuthRequest request = new OAuthRequest(api.getAccessTokenVerb(),
-                api.getAccessTokenEndpoint());
+        final OAuthRequest request = config.getOAuthRequestCreatorFactory()
+                .createAccessTokenRequest(api.getAccessTokenVerb(), api.getAccessTokenEndpoint());
         request.addQuerystringParameter(OAuthConstants.CLIENT_ID, config.getApiKey());
         request.addQuerystringParameter(OAuthConstants.CLIENT_SECRET, config.getApiSecret());
         request.addQuerystringParameter(OAuthConstants.REDIRECT_URI, config.getCallback());

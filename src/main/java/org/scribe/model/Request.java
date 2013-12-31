@@ -25,13 +25,6 @@ public interface Request {
     public Response send() throws IOException;
 
     /**
-     * Returns the complete url (host + resource + encoded querystring parameters).
-     *
-     * @return the complete url.
-     */
-    //    public String getCompleteUrl();
-
-    /**
      * Add an HTTP Header to the RequestHttpImpl
      * 
      * @param key the header name
@@ -65,14 +58,20 @@ public interface Request {
      * 
      * @param payload the body of the request
      */
-    //    public void addPayload(final String payload);
+    public void addPayload(final String payload) throws IOException;
 
     /**
      * Overloaded version for byte arrays
      *
      * @param payload
      */
-    //    public void addPayload(final byte[] payload);
+    public void addPayload(final byte[] payload) throws IOException;
+
+    /**
+     * 
+     * @return
+     */
+    public String getPayload();
 
     /**
      * Get a {@link ParameterList} with the query string parameters.
@@ -97,21 +96,6 @@ public interface Request {
     public String getUrl();
 
     /**
-     * Returns the URL without the port and the query string part.
-     * 
-     * @return the OAuth-sanitized URL
-     */
-    //    public String getSanitizedUrl();
-
-    /**
-     * Returns the body of the request
-     * 
-     * @return form encoded string
-     * @throws OAuthException if the charset chosen is not supported
-     */
-    //    public String getBodyContents();
-
-    /**
      * Returns the HTTP Verb
      * 
      * @return the verb
@@ -124,37 +108,5 @@ public interface Request {
      * @return map of headers
      */
     public Map/*<String, String>*/getHeaders();
-
-    /**
-     * Returns the connection charset. Defaults to {@link Charset} defaultCharset if not set
-     *
-     * @return charset
-     */
-    //    public String getCharset();
-
-    /**
-     * Set the charset of the body of the request
-     *
-     * @param charsetName name of the charset of the request
-     */
-    //    public void setCharset(final String charsetName);
-
-    /**
-     * Sets whether the underlying Http Connection is persistent or not.
-     *
-     * @see http://download.oracle.com/javase/1.5.0/docs/guide/net/http-keepalive.html
-     * @param connectionKeepAlive
-     */
-    //    public void setConnectionKeepAlive(final boolean connectionKeepAlive);
-
-    /**
-     * Sets whether the underlying Http Connection follows redirects or not.
-     *
-     * Defaults to true (follow redirects)
-     *
-     * @see http://docs.oracle.com/javase/6/docs/api/java/net/HttpURLConnection.html#setInstanceFollowRedirects(boolean)
-     * @param followRedirects
-     */
-    //    public void setFollowRedirects(final boolean followRedirects);
 
 }

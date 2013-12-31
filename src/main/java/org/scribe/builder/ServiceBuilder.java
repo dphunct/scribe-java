@@ -6,6 +6,7 @@ import org.scribe.builder.api.Api;
 import org.scribe.exceptions.OAuthException;
 import org.scribe.model.OAuthConfig;
 import org.scribe.model.OAuthConstants;
+import org.scribe.model.OAuthRequestCreatorFactory;
 import org.scribe.model.SignatureType;
 import org.scribe.oauth.OAuthService;
 import org.scribe.utils.Preconditions;
@@ -25,6 +26,7 @@ public class ServiceBuilder {
     private String scope;
     private SignatureType signatureType;
     private OutputStream debugStream;
+    private OAuthRequestCreatorFactory requestCreatorFactory;
 
     /**
      * Default constructor
@@ -73,6 +75,12 @@ public class ServiceBuilder {
     public ServiceBuilder provider(final Api api) {
         Preconditions.checkNotNull(api, "Api cannot be null");
         this.api = api;
+        return this;
+    }
+
+    public ServiceBuilder OAuthRequestCreator(final OAuthRequestCreatorFactory requestCreatorFactory) {
+        Preconditions.checkNotNull(requestCreatorFactory, "requestCreatorFactory cannot be null");
+        this.requestCreatorFactory = requestCreatorFactory;
         return this;
     }
 
@@ -157,7 +165,8 @@ public class ServiceBuilder {
                 "You must specify a valid api through the provider() method");
         Preconditions.checkEmptyString(apiKey, "You must provide an api key");
         Preconditions.checkEmptyString(apiSecret, "You must provide an api secret");
-        return api.createService(new OAuthConfig(apiKey, apiSecret, callback, signatureType, scope,
-                debugStream));
+        final OAuthConfig config = new OAuthConfig(apiKey, apiSecret, callback, signatureType,
+                scope, debugStream, requestCreatorFactory);
+        return api.createService(config);
     }
 }

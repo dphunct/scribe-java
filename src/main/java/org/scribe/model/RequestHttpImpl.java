@@ -14,26 +14,20 @@ import org.scribe.exceptions.OAuthException;
 
 /**
  * Represents an HTTP RequestHttpImpl object
- * 
- * @author Pablo Fernandez
  */
 public class RequestHttpImpl implements Request {
+
     private static final String CONTENT_LENGTH = "Content-Length";
     private static final String CONTENT_TYPE = "Content-Type";
-
     private final String url;
     private final Verb verb;
     private final ParameterList querystringParams;
     private final ParameterList bodyParams;
     private final Map/*<String, String>*/headers;
-    private String payload = null;
     private String charset;
-    private byte[] bytePayload = null;
+    private String content = null;
 
-    private final HttpURLConnection connection;
-
-    //    private Long connectTimeout = null;
-    //    private Long readTimeout = null;
+    private HttpURLConnection connection;
 
     /**
      * Creates a new Http RequestHttpImpl
@@ -41,9 +35,8 @@ public class RequestHttpImpl implements Request {
      * @param verb Http Verb (GET, POST, etc)
      * @param url url with optional querystring parameters.
      */
-    public RequestHttpImpl(final HttpURLConnection connection, final Verb verb, final String url) {
+    public RequestHttpImpl(final Verb verb, final String url) {
         super();
-        this.connection = connection;
         this.verb = verb;
         this.url = url;
         querystringParams = new ParameterList();
@@ -66,20 +59,33 @@ public class RequestHttpImpl implements Request {
         }
     }
 
-    void addBody(final byte[] content) throws IOException {
-        connection.setRequestProperty(CONTENT_LENGTH, String.valueOf(content.length));
+    public void addPayload(final byte[] content) throws IOException {
+        addPayload(new String(content));
+    }
+
+    public void addPayload(final String content) throws IOException {
+        this.content = content;
+    }
+
+    public String getPayload() {
+        return content;
+    }
+
+    /**
+     * TODO implement
+     */
+    public Response send() throws IOException {
+        connection.setRequestProperty(CONTENT_LENGTH, String.valueOf(content.length()));
 
         // Set default content type if none is set.
         if (connection.getRequestProperty(CONTENT_TYPE) == null) {
             connection.setRequestProperty(CONTENT_TYPE, DEFAULT_CONTENT_TYPE);
         }
         connection.setDoOutput(true);
-        connection.getOutputStream().write(content);
-    }
-
-    public Response send() throws IOException {
+        //        connection.getOutputStream().write(content);
         final Response response = new ResponseHttpImpl(connection);
         return response;
+        //        return null;
     }
 
     /* (non-Javadoc)
@@ -101,20 +107,6 @@ public class RequestHttpImpl implements Request {
      */
     public void addQuerystringParameter(final String key, final String value) {
         querystringParams.add(key, value);
-    }
-
-    /* (non-Javadoc)
-     * @see org.scribe.model.Request#addPayload(java.lang.String)
-     */
-    public void addPayload(final String payload) {
-        this.payload = payload;
-    }
-
-    /* (non-Javadoc)
-     * @see org.scribe.model.Request#addPayload(byte[])
-     */
-    public void addPayload(final byte[] payload) {
-        bytePayload = (byte[]) payload.clone();
     }
 
     /* (non-Javadoc)
@@ -153,29 +145,6 @@ public class RequestHttpImpl implements Request {
         return StringUtils.replace(StringUtils.replace(url, "\\?.*", ""), "\\:\\d{4}", "");
     }
 
-    //    /* (non-Javadoc)
-    //     * @see org.scribe.model.Request#getBodyContents()
-    //     */
-    //    public String getBodyContents() {
-    //        try {
-    //            return new String(getByteBodyContents(), getCharset());
-    //        } catch (final UnsupportedEncodingException uee) {
-    //            throw new OAuthException("Unsupported Charset: " + charset, uee);
-    //        }
-    //    }
-
-    //    byte[] getByteBodyContents() {
-    //        if (bytePayload != null) {
-    //            return bytePayload;
-    //        }
-    //        final String body = (payload != null) ? payload : bodyParams.asFormUrlEncodedString();
-    //        try {
-    //            return body.getBytes(getCharset());
-    //        } catch (final UnsupportedEncodingException uee) {
-    //            throw new OAuthException("Unsupported Charset: " + getCharset(), uee);
-    //        }
-    //    }
-
     /* (non-Javadoc)
      * @see org.scribe.model.Request#getVerb()
      */
@@ -203,4 +172,12 @@ public class RequestHttpImpl implements Request {
     public String toString() {
         return "@RequestHttpImpl(" + String.valueOf(getVerb()) + " " + getUrl() + ")";
     }
+
+    /**
+     * @return
+     */
+    public String getBodyContents() {
+        return getPayload();
+    }
+
 }

@@ -17,37 +17,11 @@ public class OAuthRequest implements Request {
     private static final String OAUTH_PREFIX = "oauth_";
     private final Map/*<String, String>*/oauthParameters;
 
-    private Request request;
+    private final Request request;
 
     public OAuthRequest(final Request request) {
         super();
         this.request = request;
-        oauthParameters = new HashMap/*<String, String>*/();
-    }
-
-    /**
-     * Default constructor.
-     * 
-     * @param verb Http verb/method
-     * @param url resource URL
-     */
-    public OAuthRequest(final Verb verb, final String url) {
-        super();
-        try {
-            final Class clazz = OAuthRequest.class.getClassLoader().loadClass(
-                    "org.scribe.model.RequestFactoryImpl");
-            final RequestFactory factory = (RequestFactory) clazz.newInstance();
-            request = factory.createRequest(verb, url);
-        } catch (final ClassNotFoundException e) {
-            e.printStackTrace();
-            request = null;
-        } catch (final InstantiationException e) {
-            e.printStackTrace();
-            request = null;
-        } catch (final IllegalAccessException e) {
-            e.printStackTrace();
-            request = null;
-        }
         oauthParameters = new HashMap/*<String, String>*/();
     }
 
@@ -145,16 +119,6 @@ public class OAuthRequest implements Request {
         return request.getUrl();
     }
 
-    //    /**
-    //     * @see org.scribe.model.Request#getBodyContents()
-    //     */
-    //    public String getBodyContents() {
-    //        if (request == null) {
-    //            throw new IllegalAccessError(NOT_INTIALIZED);
-    //        }
-    //        return request.getBodyContents();
-    //    }
-
     /**
      * @see org.scribe.model.Request#getVerb()
      */
@@ -184,6 +148,27 @@ public class OAuthRequest implements Request {
             throw new IllegalAccessError(NOT_INTIALIZED);
         }
         return request.send();
+    }
+
+    /* (non-Javadoc)
+     * @see org.scribe.model.Request#addPayload(java.lang.String)
+     */
+    public void addPayload(final String payload) throws IOException {
+        request.addPayload(payload);
+    }
+
+    /* (non-Javadoc)
+     * @see org.scribe.model.Request#addPayload(byte[])
+     */
+    public void addPayload(final byte[] payload) throws IOException {
+        request.addPayload(payload);
+    }
+
+    /* (non-Javadoc)
+     * @see org.scribe.model.Request#getPayload()
+     */
+    public String getPayload() {
+        return request.getPayload();
     }
 
 }
